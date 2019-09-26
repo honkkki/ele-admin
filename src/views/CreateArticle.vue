@@ -9,7 +9,6 @@
     </el-form-item>
     <el-form-item>
         <el-button type="primary" native-type="submit">立即创建</el-button>
-        <el-button>取消</el-button>
     </el-form-item>
 </el-form>
 
@@ -28,7 +27,15 @@
         },
         methods: {
             saveArticle() {
-                console.log(this.article);
+                this.$http.post('/api/articles', this.article).then(res => {
+                    this.$message({
+                        message: "文章创建成功",
+                        type: "success"
+                    })
+                    this.$router.push('/articles/index')
+                }).catch(res => {
+                    console.log(res)
+                })
             }
         }
     }

@@ -1,11 +1,19 @@
 <template>
-    <div>
-        <el-table :data="tableData">
-            <el-table-column prop="date" label="日期" width="140"></el-table-column>
-            <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-            <el-table-column prop="address" label="地址"></el-table-column>
+        <el-table :data="articles">
+            <el-table-column prop="title" label="标题" width="100"></el-table-column>
+            <el-table-column prop="body" label="内容" width="160"></el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button
+                            size="mini"
+                            @click="handleEdit(scope.row._id)">编辑</el-button>
+                    <el-button
+                            size="mini"
+                            type="danger"
+                            @click="handleDelete(scope.row._id)">删除</el-button>
+                </template>
+            </el-table-column>
         </el-table>
-    </div>
 </template>
 
 
@@ -14,14 +22,33 @@
 
     export default {
         data() {
-            const item = {
-                date: '2016-05-02',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-            };
             return {
-                tableData: Array(20).fill(item)
+                articles: []
             }
+        },
+        created() {
+           this.fetch()
+        },
+        methods: {
+            fetch() {
+                this.$http.get('/api/articles').then(res => {
+                    this.articles = res.data
+                })
+            },
+
+            handleEdit(id) {
+                this.$router.push(`/articles/${id}/edit`)
+            },
+            handleDelete(id) {
+                this.$http.delete(`/api/article/${id}`).then(res => {
+                    this.$message({
+                        message: "文章删除成功",
+                        type: "success"
+                    })
+                    this.fetch()
+                })
+
+            },
         }
     }
 </script>
